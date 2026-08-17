@@ -1,0 +1,76 @@
+name: IDX Daily Scrape & Dashboard Deploy
+
+on:
+  schedule:
+    - cron: "15 10 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Optional target date (YYYYMMDD). Leave empty for today."
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "idx-daily"
+  cancel-in-progress: false
+
+jobs:
+  scrape-and-score:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Set up Python
+        run: uv python install 3.13
+
+      - name: Sync dependencies
+        working-directory: python
+        run: uv sync
+
+      - name: Run daily ingestion (scrape OHLCV + broker + index, score, build site bundle)
+        working-directory: python
+        run: |
+          if [ -n "${{ github.event.inputs.date }}" ]; then
+            uv run python cli.py daily "${{ github.event.inputs.date }}"
+          else
+            uv run python cli.py daily
+          fi
+
+      - name: Commit updated data & site bundle
+        run: |
+          git config user.name "idx-bot"
+          git config user.email "idx-bot@users.noreply.github.com"
+          git add data/ site/data/
+          if git diff --cached --quiet; then
+            echo "No data changes to commit (non-trading day or already up to date)."
+          else
+            git commit -m "chore: daily IDX data ingestion $(date -u +%F)"
+            git push
+          fi
+
+      - name: Upload site artifact for Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy-pages:
+    needs: scrape-and-score
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
