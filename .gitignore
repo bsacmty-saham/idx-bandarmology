@@ -1,0 +1,61 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+.env
+.python-version
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# --- Data ---
+# Scraped datasets (large, regeneratable)
+data/allCompanies.json
+data/brokerSearch.json
+data/companyDetailsByKodeEmiten.json
+data/companyDetailsByKodeEmitenTop50TradingValue.json
+data/companySummaryByKodeEmiten.json
+data/financial_ratio.json
+data/corporateActions.json
+data/network_alpha_data.json
+data/stock_summary_*.json
+data/broker_summary_*.json
+data/index_summary.json
+data/news/
+
+# Parquet (regeneratable from timeseries JSON on every run — not persisted)
+data/parquet/
+
+# NOTE: data/timeseries/ and data/bandarmology/ are intentionally NOT
+# ignored — the daily automation workflow commits them back to the repo
+# so trading history accumulates day over day (required for z-score
+# baselines and the website's history view).
+
+# Internal scraper state
+data/.schema_snapshots.json
+data/.scrape_stats.json
+data/.raw_archive/
+
+# --- Project Specific ---
+.claude/
+.deprecated/
+CLAUDE.md
+
+# --- OS/IDEs ---
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Docker ---
+neo4j_data/
+postgres_data/
+
+# --- Logs ---
+*.log
