@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IDX Floor Board — Bandarmology Screener</title>
+<style>
+  :root{
+    --bg: #0d1117;
+    --panel: #131a24;
+    --panel-line: #1f2937;
+    --ink: #e8e6df;
+    --ink-dim: #8b93a3;
+    --amber: #e8a33d;
+    --green: #4fae7a;
+    --red: #d9614f;
+    --serif: "Iowan Old Style","Georgia","Times New Roman",serif;
+    --mono: "IBM Plex Mono","SF Mono","Consolas",monospace;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--mono); font-size:14px;
+    background-image:
+      linear-gradient(var(--panel-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--panel-line) 1px, transparent 1px);
+    background-size: 48px 48px;
+    background-attachment: fixed;
+  }
+  header{
+    padding:28px 24px 18px; border-bottom:1px solid var(--panel-line);
+    background:linear-gradient(180deg, rgba(13,17,23,0.98), rgba(13,17,23,0.85));
+    position:sticky; top:0; z-index:5; backdrop-filter: blur(4px);
+  }
+  .masthead{display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:10px}
+  h1{
+    font-family:var(--serif); font-weight:400; font-size:26px; margin:0;
+    letter-spacing:0.5px; color:var(--ink);
+  }
+  h1 em{font-style:italic; color:var(--amber)}
+  .sub{color:var(--ink-dim); font-size:12px; letter-spacing:0.08em; text-transform:uppercase}
+  .meta{color:var(--ink-dim); font-size:12px; text-align:right}
+  .meta b{color:var(--amber); font-weight:600}
+  main{max-width:1180px; margin:0 auto; padding:22px 24px 80px}
+  .strip{
+    display:flex; gap:0; overflow-x:auto; border:1px solid var(--panel-line);
+    background:var(--panel); margin-bottom:26px;
+  }
+  .strip .tick{
+    padding:12px 18px; border-right:1px solid var(--panel-line); white-space:nowrap;
+    min-width:150px;
+  }
+  .strip .tick .code{color:var(--ink-dim); font-size:11px; letter-spacing:0.06em}
+  .strip .tick .val{font-size:16px; font-weight:600}
+  .up{color:var(--green)} .down{color:var(--red)}
+  section{margin-bottom:34px}
+  .section-head{display:flex; align-items:baseline; gap:12px; margin-bottom:10px}
+  .eyebrow{
+    font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--amber);
+    border:1px solid var(--amber); padding:2px 8px; border-radius:2px;
+  }
+  h2{font-family:var(--serif); font-weight:400; font-size:19px; margin:0; color:var(--ink)}
+  .note{color:var(--ink-dim); font-size:12px; margin:6px 0 14px; line-height:1.6; max-width:760px}
+  table{width:100%; border-collapse:collapse; background:var(--panel); border:1px solid var(--panel-line)}
+  th,td{padding:9px 12px; text-align:right; border-bottom:1px solid var(--panel-line); white-space:nowrap}
+  th:first-child,td:first-child{text-align:left}
+  th{
+    color:var(--ink-dim); font-weight:500; font-size:11px; text-transform:uppercase;
+    letter-spacing:0.06em; border-bottom:1px solid var(--panel-line);
+  }
+  tbody tr:hover{background:rgba(232,163,61,0.06)}
+  .code-cell{font-weight:600; letter-spacing:0.03em}
+  .score-bar{position:relative; width:70px; height:6px; background:#1f2937; display:inline-block; vertical-align:middle; margin-right:8px}
+  .score-bar span{position:absolute; left:0; top:0; bottom:0; background:var(--amber)}
+  .empty{
+    padding:34px; text-align:center; color:var(--ink-dim); border:1px dashed var(--panel-line);
+    background:var(--panel);
+  }
+  .empty b{color:var(--amber)}
+  footer{
+    border-top:1px solid var(--panel-line); padding:20px 24px; color:var(--ink-dim);
+    font-size:11px; line-height:1.7; max-width:760px; margin:0 auto;
+  }
+  code{color:var(--amber)}
+  @media (max-width:640px){
+    h1{font-size:21px} table{font-size:12px} th,td{padding:7px 8px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="masthead">
+    <div>
+      <h1>IDX Floor Board <em>— Bandarmology</em></h1>
+      <div class="sub">Bursa Efek Indonesia · Screener Otomatis</div>
+    </div>
+    <div class="meta">
+      Data per <b id="meta-date">—</b><br>
+      Diperbarui <span id="meta-gen">—</span> WIB
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <div id="index-strip" class="strip"><div class="tick"><div class="code">MEMUAT INDEKS…</div></div></div>
+
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">01</span>
+      <h2>Accumulation Score — Papan Screener</h2>
+    </div>
+    <p class="note">
+      Skor 0–100 dihitung dari anomali volume &amp; frekuensi (z-score 20 hari), rasio net foreign flow,
+      imbalance bid/offer, dan pola "quiet absorption" (volume naik saat harga relatif flat).
+      Ini heuristik dari data publik <code>Stock Summary</code> IDX, <b>bukan</b> data broker-per-saham
+      dan <b>bukan rekomendasi investasi.</b>
+    </p>
+    <table id="bandar-table">
+      <thead><tr>
+        <th>Kode</th><th>Skor</th><th>Chg%</th><th>Volume</th><th>Vol Z</th><th>Freq Z</th><th>Foreign Net Ratio</th><th>Bid/Offer Imb.</th>
+      </tr></thead>
+      <tbody><tr><td colspan="8" style="text-align:center;color:var(--ink-dim)">Memuat…</td></tr></tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">02</span>
+      <h2>Stock Summary — OHLCV &amp; Foreign Flow</h2>
+    </div>
+    <table id="stock-table">
+      <thead><tr>
+        <th>Kode</th><th>Close</th><th>Chg%</th><th>Volume</th><th>Value</th><th>Freq</th><th>Foreign Buy</th><th>Foreign Sell</th>
+      </tr></thead>
+      <tbody><tr><td colspan="8" style="text-align:center;color:var(--ink-dim)">Memuat…</td></tr></tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">03</span>
+      <h2>Broker Summary — Aliran Pasar (Market-Wide)</h2>
+    </div>
+    <p class="note">
+      Agregat per broker untuk seluruh pasar (bukan per saham) — sesuai batasan API publik IDX.
+    </p>
+    <table id="broker-table">
+      <thead><tr><th>Firm</th><th>Kode</th><th>Volume</th><th>Value</th><th>Freq</th></tr></thead>
+      <tbody><tr><td colspan="5" style="text-align:center;color:var(--ink-dim)">Memuat…</td></tr></tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">04</span>
+      <h2>Corporate Actions Terbaru</h2>
+    </div>
+    <table id="ca-table">
+      <thead><tr><th>Kode</th><th>Kategori</th><th>Keterangan</th><th>Tanggal</th></tr></thead>
+      <tbody><tr><td colspan="4" style="text-align:center;color:var(--ink-dim)">Memuat…</td></tr></tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <span class="eyebrow">05</span>
+      <h2>Market News Headlines</h2>
+    </div>
+    <table id="news-table">
+      <thead><tr><th>Judul</th><th>Tanggal</th></tr></thead>
+      <tbody><tr><td colspan="2" style="text-align:center;color:var(--ink-dim)">Memuat…</td></tr></tbody>
+    </table>
+  </section>
+
+</main>
+
+<footer>
+  Sumber: scraper otomatis <code>idx-bei</code> (endpoint publik <code>idx.co.id/primary</code>), dijalankan harian via GitHub Actions.
+  Data tick-by-tick / running-trade dan broker-per-saham tidak tersedia gratis dari IDX — hanya lewat IDX Data Services berbayar.
+  Untuk riset &amp; edukasi, bukan nasihat investasi.
+</footer>
+
+<script>
+async function loadData(){
+  const els = {
+    idxStrip: document.getElementById('index-strip'),
+    bandarBody: document.querySelector('#bandar-table tbody'),
+    stockBody: document.querySelector('#stock-table tbody'),
+    brokerBody: document.querySelector('#broker-table tbody'),
+    metaDate: document.getElementById('meta-date'),
+    metaGen: document.getElementById('meta-gen'),
+  };
+
+  let bundle;
+  try{
+    const res = await fetch('data/latest.json', {cache:'no-store'});
+    bundle = await res.json();
+  }catch(e){
+    els.bandarBody.innerHTML = `<tr><td colspan="8"><div class="empty"><b>Belum ada data.</b><br>Jalankan <code>cli.py daily</code> lalu commit <code>site/data/latest.json</code>, atau tunggu GitHub Actions selesai.</div></td></tr>`;
+    return;
+  }
+
+  els.metaDate.textContent = bundle.date || '—';
+  els.metaGen.textContent = bundle.generated_at ? new Date(bundle.generated_at).toLocaleString('id-ID', {timeZone:'Asia/Jakarta'}) : '—';
+
+  const fmt = n => n==null ? '—' : Number(n).toLocaleString('id-ID', {maximumFractionDigits:0});
+  const pct = n => n==null ? '—' : (n>0?'+':'')+Number(n).toFixed(2)+'%';
+  const cls = n => n>0 ? 'up' : (n<0 ? 'down' : '');
+
+  // Index strip
+  const idx = bundle.index_summary || [];
+  els.idxStrip.innerHTML = idx.length ? idx.slice(0,12).map(i => `
+    <div class="tick">
+      <div class="code">${i.IndexCode || i.Code || '—'}</div>
+      <div class="val ${cls(i.Change)}">${fmt(i.IndexValue || i.Close)} <span style="font-size:11px">${pct(i.PercentageChange || i.Change)}</span></div>
+    </div>`).join('') : `<div class="tick"><div class="code">Tidak ada data indeks untuk tanggal ini</div></div>`;
+
+  // Bandarmology table
+  const bandar = bundle.bandarmology || [];
+  els.bandarBody.innerHTML = bandar.length ? bandar.slice(0,25).map(s => `
+    <tr>
+      <td class="code-cell">${s.StockCode}</td>
+      <td><span class="score-bar"><span style="width:${Math.min(100,s.AccumulationScore)}%"></span></span>${s.AccumulationScore}</td>
+      <td class="${cls(s.PriceChangePct)}">${pct(s.PriceChangePct)}</td>
+      <td>${fmt(s.Volume)}</td>
+      <td class="${cls(s.VolumeZScore)}">${s.VolumeZScore}</td>
+      <td class="${cls(s.FrequencyZScore)}">${s.FrequencyZScore}</td>
+      <td class="${cls(s.ForeignNetRatio)}">${(s.ForeignNetRatio*100).toFixed(1)}%</td>
+      <td>${(s.BidOfferImbalance*100).toFixed(1)}%</td>
+    </tr>`).join('') : `<tr><td colspan="8"><div class="empty"><b>Belum cukup histori.</b><br>Jalankan <code>cli.py backfill</code> min. 5–20 hari perdagangan agar z-score bisa dihitung.</div></td></tr>`;
+
+  // Stock summary table
+  const stocks = (bundle.stock_summary || []).slice().sort((a,b)=> (b.Value||0)-(a.Value||0));
+  els.stockBody.innerHTML = stocks.length ? stocks.slice(0,25).map(s => {
+    const chg = s.Previous ? ((s.Close - s.Previous)/s.Previous*100) : 0;
+    return `<tr>
+      <td class="code-cell">${s.StockCode}</td>
+      <td>${fmt(s.Close)}</td>
+      <td class="${cls(chg)}">${pct(chg)}</td>
+      <td>${fmt(s.Volume)}</td>
+      <td>${fmt(s.Value)}</td>
+      <td>${fmt(s.Frequency)}</td>
+      <td>${fmt(s.ForeignBuy)}</td>
+      <td>${fmt(s.ForeignSell)}</td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="8"><div class="empty">Tidak ada data stock summary untuk tanggal ini.</div></td></tr>`;
+
+  // Broker summary table
+  const brokers = (bundle.broker_summary || []).slice().sort((a,b)=> (b.Value||0)-(a.Value||0));
+  els.brokerBody.innerHTML = brokers.length ? brokers.slice(0,25).map(b => `
+    <tr>
+      <td class="code-cell">${b.FirmName || '—'}</td>
+      <td>${b.IDFirm || '—'}</td>
+      <td>${fmt(b.Volume)}</td>
+      <td>${fmt(b.Value)}</td>
+      <td>${fmt(b.Frequency)}</td>
+    </tr>`).join('') : `<tr><td colspan="5"><div class="empty">Tidak ada data broker summary untuk tanggal ini.</div></td></tr>`;
+
+  // Corporate actions table
+  const caBody = document.querySelector('#ca-table tbody');
+  const ca = bundle.corporate_actions || [];
+  caBody.innerHTML = ca.length ? ca.slice(0,20).map(c => `
+    <tr>
+      <td class="code-cell">${c.StockCode || c.Code || '—'}</td>
+      <td>${c._category || '—'}</td>
+      <td style="text-align:left; white-space:normal">${c.Title || c.Description || c.Keterangan || '—'}</td>
+      <td>${c.Date || c.RecordDate || c.CADate || '—'}</td>
+    </tr>`).join('') : `<tr><td colspan="4"><div class="empty">Belum ada data corporate action.</div></td></tr>`;
+
+  // News table
+  const newsBody = document.querySelector('#news-table tbody');
+  const newsList = bundle.news || [];
+  newsBody.innerHTML = newsList.length ? newsList.slice(0,20).map(n => `
+    <tr>
+      <td style="text-align:left; white-space:normal">${n.Title || n.title || n.Headline || '—'}</td>
+      <td>${n.Date || n.PublishDate || n.date || '—'}</td>
+    </tr>`).join('') : `<tr><td colspan="2"><div class="empty">Belum ada data berita.</div></td></tr>`;
+}
+loadData();
+</script>
+
+</body>
+</html>
