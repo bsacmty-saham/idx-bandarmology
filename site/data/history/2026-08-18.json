@@ -1,0 +1,17 @@
+{
+  "date": "2026-08-18",
+  "generated_at": "2026-08-18T11:04:00.363903Z",
+  "stock_summary": [],
+  "broker_summary": [],
+  "index_summary": [],
+  "bandarmology": [],
+  "news": [],
+  "corporate_actions": [],
+  "meta": {
+    "stock_count": 0,
+    "broker_count": 0,
+    "index_count": 0,
+    "bandar_scored": 0,
+    "note": "Broker summary is market-wide (per broker), not per-stock \u2014 IDX public API does not expose per-stock broker breakdowns or tick-level running trade data for free. Bandarmology scores here are a heuristic proxy from public stock summary data (volume/frequency anomalies, foreign flow, bid/offer imbalance), not investment advice."
+  }
+}
